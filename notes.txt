@@ -1,6 +1,47 @@
+A memory safe programming without a need of a garbage collector.
+
+
 # for asynch programming -
 
 tokio contains, http client, web server, grpc implementeation.
 
 # if we want to add an asynch I/O, we need an synch runtime like tokio.
+
+_ = socket.write_all(b"Hello thanga as bytes").await;
+
+
+instead,
+
+we can also use
+_ = socket.write_all(b"Hello thanga as bytes").await.unwrap();
+
+unwrap() woks like an emergency stop button while executing a thread.
+
+socket: &TcpStream -> Read only pointer
+
+socket: &mut TcpStream -> we can manipulate the pointer and objects
+
+eunm {
+Empty,
+Question(string),
+whatever(customer),  ------> 'whatever' gives a parameter of type customer
+anythingelse(invoice)  ------> 'anything else' gives of type invoice
+}
+
+enums can have types and parameters
+enums can have methods.
+enums can have interfaces (interfaces <-> traits)
+its like union data types.
+
+Rust arrays must be defined in a compile time.
+It should be static.
+
+
+If we want a flexible array / dynamic array -> we need to look into vectors.
+
+Arrays in rust lives on Stack.
+
+
+
+
 
