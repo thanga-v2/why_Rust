@@ -41,6 +41,14 @@ If we want a flexible array / dynamic array -> we need to look into vectors.
 
 Arrays in rust lives on Stack.
 
+Crates -
+
+To talk to web api
+
+We are using async-openai crate
+
+
+
 
 
 

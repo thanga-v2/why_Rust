@@ -1,15 +1,24 @@
-use std::time::Duration;
-use anyhow::{anyhow, Result};
-use tokio::io::{self,AsyncWriteExt};
-use tokio::io::AsyncReadExt;
-use tokio::net::{TcpListener, TcpStream};
-use tokio::time::timeout;
+use anyhow::{anyhow, Error, Result};
+use async_openai::{
+    types::{
+        ChatCompletionRequestMessage , ChatCompletionRequestSystemMessageArgs,
+        ChatCompletionRequestUserMessageArgs, CreateChatCompletionRequestArgs
+    },
+    Client,
+};
+use tokio::{
+    io::{ AsyncWriteExt,AsyncReadExt },
+    net::{TcpListener, TcpStream},
+    time::{timeout,Duration}
+};
+
+use std::fmt::Display;
+use async_openai::config::OpenAIConfig;
 // we can't write an async function directly.
 
 // we need a wrapper which can wrap our asynch main function
 
 #[tokio::main]
-
 // the '#' is a macro that can generate code for a wrapper.
 
 async fn main() -> Result<()> {
@@ -35,12 +44,22 @@ async fn main() -> Result<()> {
         // Rust doesn't have a grabage collector
         // the variable memory gets free as soon as its move out of scope.
 
+        match updated_user_loop_open_ai(&mut socket).await {
+            Ok(client) => println!("Client {:?}",client),
+            Err(e) => eprintln!("Err"),
+        }
+
         // *move is using *socket**
         tokio::spawn( async move {
             println!("A new user connected");
             _ = socket.write_all(b"Hello thanga im awaiting as bytes").await;
             match user_loop(&mut socket).await {
                 Ok(_) => println!("User Disconnected"),
+                Err(e) => eprintln!("Error {}",e),
+            }
+
+            match updated_user_loop_open_ai(&mut socket).await {
+                Ok(_) => println!("Client got connected inside the spawn"),
                 Err(e) => eprintln!("Error {}",e),
             }
 
@@ -108,6 +127,15 @@ async fn main() -> Result<()> {
         }
 
         Ok(())
+    }
+
+    async fn updated_user_loop_open_ai(socket : &mut TcpStream) -> Result<Client<OpenAIConfig>, Error>{
+
+        let client = Client::new();
+
+        println!("Show what's inside client object {:?}",&client);
+
+        Ok(client)
     }
 
    Ok(())   // if its success return nothing else return the error

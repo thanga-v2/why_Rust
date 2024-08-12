@@ -1,0 +1,1 @@
+cargo:rustc-env=MIME_TYPES_GENERATED_PATH=/Users/thangaraj/RustroverProjects/why_rust/chat_bots/target/debug/build/mime_guess-fea3a9a0b7b9648c/out/mime_types_generated.rs
