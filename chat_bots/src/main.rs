@@ -1,11 +1,12 @@
 use anyhow::{anyhow, Error, Result};
 use async_openai::{
     types::{
-        ChatCompletionRequestMessage , ChatCompletionRequestSystemMessageArgs,
-        ChatCompletionRequestUserMessageArgs, CreateChatCompletionRequestArgs
+        ChatCompletionRequestMessage , ChatCompletionRequestSystemMessageArgs, ChatCompletionRequestAssistantMessageArgs,
+        ChatCompletionRequestUserMessageArgs, CreateChatCompletionRequestArgs, Role
     },
     Client,
 };
+
 use tokio::{
     io::{ AsyncWriteExt,AsyncReadExt },
     net::{TcpListener, TcpStream},
@@ -48,6 +49,11 @@ async fn main() -> Result<()> {
             Ok(client) => println!("Client {:?}",client),
             Err(e) => eprintln!("Err"),
         }
+
+        match openai_user_loop(&mut socket).await{
+            Ok(msg) => println!("The prompt rightly called"),
+            Err(e) => eprintln!("There seem to be an error"),
+        };
 
         // *move is using *socket**
         tokio::spawn( async move {
@@ -136,6 +142,68 @@ async fn main() -> Result<()> {
         println!("Show what's inside client object {:?}",&client);
 
         Ok(client)
+    }
+
+    async fn openai_user_loop(socket : &mut TcpStream) -> Result<()>{
+
+        // INITIALIZE THE OPEN AI CLIENT
+        let client = Client::new();
+
+        let prompt = "You are a helpfull assistant for thangaraj";
+
+        // let message = ChatCompletionRequestSystemMessageArgs::default()
+        //     .content(prompt)
+        //     .build()?;
+        //
+        // let mut messages = vec![message];
+
+        // let mut messages: Vec<ChatCompletionRequestSystemMessageArgs> = vec![
+        //     ChatCompletionRequestSystemMessageArgs::default()
+        //         .content(prompt.to_string())
+        //         .build()?
+        // ];
+
+        // Create the system message directly as a ChatCompletionRequestMessage
+        let system_message = ChatCompletionRequestSystemMessageArgs::default()
+            .role(Role::System)
+            .content(prompt.to_string())
+            .name: None;
+
+
+        // Create a vector to hold all the messages
+        let mut messages: Vec<ChatCompletionRequestMessage> = vec![system_message];
+
+
+        println!("Here is the message {:?}",messages);
+
+        // messages.push(message);
+
+        loop {
+            // first get the user input
+            let input = match get_user_input(socket).await? {
+                Input::Question(input) => input,
+                Input::Empty => return Ok(())
+            };
+
+            let user_message = ChatCompletionRequestSystemMessageArgs::default()
+                .role: Role::User
+                .content(input.to_string())
+                .name: None;
+
+
+            // putting together the payload
+            // creating a request
+            let request = CreateChatCompletionRequestArgs::default()
+                .model("gpt-4o")
+                .messages(messages.clone())
+                .build()?;
+
+
+        }
+
+
+
+        Ok(())
     }
 
    Ok(())   // if its success return nothing else return the error
