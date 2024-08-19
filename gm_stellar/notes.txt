@@ -1,0 +1,3 @@
+# for generating a new key pair on testnet
+
+stellar keys generate new_kp --network testnet
