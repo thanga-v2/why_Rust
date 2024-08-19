@@ -1,3 +1,7 @@
 # for generating a new key pair on testnet
 
-stellar keys generate new_kp --network testnet
+stellar keys generate thanga_kp --network testnet
+
+# lets bootstrap a new project
+
+stellar contract init hello_world
