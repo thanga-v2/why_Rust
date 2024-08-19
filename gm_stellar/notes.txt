@@ -4,4 +4,30 @@ stellar keys generate thanga_kp --network testnet
 
 # lets bootstrap a new project
 
-stellar contract init hello_world
+stellar contract init hello-thanga
+
+# compiling from rust to wasm
+
+stellar contract build
+
+# deploying the contract
+
+stellar contract deploy -network testnet --source thanga_kp --wasm target/wasm32-unknown-unknown/release/hello_world.wasm
+
+(base) thangaraj@Admins-MacBook-Pro hello-thanga % stellar contract deploy --network testnet --source thanga_kp --wasm target/wasm32-unknown-unknown/release/hello_world.wasm
+CB2AEJRXYVD7EER2LH4FAJ7NKA57DE6GW466ME7IOMTCHNHTWZAGBWUM
+
+On testnet -
+
+https://stellar.expert/explorer/testnet/contract/CB2AEJRXYVD7EER2LH4FAJ7NKA57DE6GW466ME7IOMTCHNHTWZAGBWUM
+
+
+stellar contract invoke --id CB2AEJRXYVD7EER2LH4FAJ7NKA57DE6GW466ME7IOMTCHNHTWZAGBWUM --network testnet --source thanga_kp -- hello --to 'world'
+
+(base) thangaraj@Admins-MacBook-Pro hello-thanga % stellar contract invoke --id CB2AEJRXYVD7EER2LH4FAJ7NKA57DE6GW466ME7IOMTCHNHTWZAGBWUM --network testnet --source thanga_kp -- hello --to 'world'
+["Hello","world"]
+
+Txn History -
+
+https://stellar.expert/explorer/testnet/contract/CB2AEJRXYVD7EER2LH4FAJ7NKA57DE6GW466ME7IOMTCHNHTWZAGBWUM
+
